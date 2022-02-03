@@ -1,0 +1,5 @@
+{
+    "editor.formatOnSave": true,
+    "python.defaultInterpreterPath": "~/.virtualenvs/tree-sitter-python-language",
+    "python.formatting.provider": "black"
+}
