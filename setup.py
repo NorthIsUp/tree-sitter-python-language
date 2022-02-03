@@ -9,8 +9,9 @@ if not BUILD_OUTPUT.exists():
 
 setup(
     name='tree-sitter-python-language',
+    version='0.0.1',
     packages=find_packages(),
-    package_data={'': [str(BUILD_OUTPUT)]},
+    # package_data={'': [str(BUILD_OUTPUT)]},
     include_package_data=True,
     install_requires=['tree_sitter'],
     setup_requires=['tree_sitter'],
