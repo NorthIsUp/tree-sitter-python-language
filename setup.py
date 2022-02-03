@@ -8,6 +8,7 @@ if not BUILD_OUTPUT.exists():
     assert BUILD_OUTPUT.exists(), f'build failed, {BUILD_OUTPUT} does not exist'
 
 setup(
+    name='tree-sitter-python-language',
     packages=find_packages(),
     package_data={'': [str(BUILD_OUTPUT)]},
     include_package_data=True,
