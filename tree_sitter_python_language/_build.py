@@ -1,72 +1,36 @@
-import shutil
 from pathlib import Path
-from shutil import rmtree
-from tempfile import mkdtemp
-from typing import Dict, Optional
+from threading import Semaphore
+from typing import Optional
 
 from tree_sitter import Language
 
 _PACKAGE = Path(__file__).parent
 
-_BUILD_INPUT = _PACKAGE / "vendor" / "tree-sitter-python"
+_BUILD_INPUT = _PACKAGE / "src"
 _BUILD_OUTPUT = _PACKAGE / "python-language.so"
-_TREE_SITTER_ZIP_URL = (
-    "https://github.com/tree-sitter/tree-sitter-python/archive/{ref}.zip"
-)
+
+_language_cache: Optional[Language] = None
 
 
-def py_language(cache: Dict[str, Language] = {}) -> Language:
-    if not cache:
-        output_path = build_python_language(rebuild=False)
-        cache["python"] = Language(output_path, "python")
+def py_language(rebuild: bool = False) -> Language:
+    global _language_cache
+    if rebuild or not _language_cache:
+        _language_cache = Language(build_python_language(rebuild=True), "python")
+    assert _language_cache, "this should exist"
+    return _language_cache
 
-    return cache["python"]
 
-
-def build_python_language(rebuild: bool = False) -> Path:
+def build_python_language(
+    rebuild: bool = False, _lock: Semaphore = Semaphore()
+) -> Path:
     """compile the python language into a useable .so file"""
     assert _BUILD_INPUT.exists(), "the language files must be downloaded"
 
-    if _BUILD_OUTPUT.exists() and rebuild:
+    if rebuild and _BUILD_OUTPUT.exists():
         _BUILD_OUTPUT.unlink()
 
-    if not _BUILD_OUTPUT.exists():
-        build_successful = Language.build_library(
-            str(_BUILD_OUTPUT), [str(_BUILD_INPUT)]
-        )
+    if _lock.acquire() and not _BUILD_OUTPUT.exists():
+        build_successful = Language.build_library(str(_BUILD_OUTPUT), [str(_PACKAGE)])
         assert build_successful, "python tree-parser language failed to build"
 
     return _BUILD_OUTPUT
-
-
-def fetch_python_language_zip(ref: Optional[str] = None) -> None:
-    """
-    Download and extract the python language repo
-    ref: git ref to download, e.g. 'refs/heads/master' or a git sha
-    """
-    import zipfile
-    from io import BytesIO
-
-    import requests
-
-    url = _TREE_SITTER_ZIP_URL.format(ref=ref or "refs/heads/master")
-    response = requests.get(url, allow_redirects=True)
-
-    # extracting the zip file contents but remove the top level dirname
-    if _BUILD_INPUT.exists():
-        rmtree(_BUILD_INPUT, ignore_errors=True)
-
-    with zipfile.ZipFile(BytesIO(response.content)) as zip:
-        extract_to = Path(mkdtemp())
-        zip.extractall(extract_to)
-
-    extracted, *extra = list(extract_to.glob("*"))
-    assert not extra, "there should only be one dir extracted"
-
-    shutil.move(extracted, _BUILD_INPUT)
-
-
-def fetch_and_build_python_language(ref: Optional[str] = None) -> Language:
-    fetch_python_language_zip(ref=ref)
-    build_python_language(rebuild=True)
-    return py_language()

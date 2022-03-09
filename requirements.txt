@@ -1,2 +1,0 @@
-requests
-tree_sitter
