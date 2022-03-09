@@ -1,4 +1,4 @@
-PACKAGE_VERSION := 0.11.5
+PACKAGE_VERSION := 0.11.11
 GRAMMAR_VERSION := 0.19.0
 
 TREE_SITTER_PYTHON_SRC := tree-sitter-python-$(GRAMMAR_VERSION)
@@ -63,7 +63,7 @@ pyproject.toml:
 	build-backend = "poetry.core.masonry.api"'
 
 deps: clean
-deps: pyproject.toml
+# deps: pyproject.toml
 deps: tree_sitter_python_language/_versions.py
 deps: build/$(TREE_SITTER_PYTHON_SRC)
 deps:
