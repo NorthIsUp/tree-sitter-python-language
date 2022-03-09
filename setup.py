@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 import sys
 from distutils.core import setup
+from pathlib import Path
 from typing import Any, Dict
 
 package_name = "tree-sitter-python-language"
 package_under = package_name.replace("-", "_")
 
 # add tree_sitter_python_language to prevent __init__ from running
-sys.path.append(package_under)
+sys.path.append(str(Path(__file__).parent / package_under))
 
-from _versions import __grammar_version__, __version__
+try:
+    from _versions import __grammar_version__, __version__
+except ModuleNotFoundError as e:
+    raise ModuleNotFoundError("Run 'make build' before using setup.py") from e
 
 packages = [package_under]
 
