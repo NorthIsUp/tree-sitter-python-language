@@ -5,8 +5,6 @@ from time import time
 
 sys.path.append(str(Path(__file__).parent))
 
-from _build import py_language
-
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -41,6 +39,8 @@ def main():
 
     else:
         start = time()
+        from _build import py_language
+
         py_language(rebuild=True)
         print(f"Recompiled language in {time() - start:0.4} seconds")
 

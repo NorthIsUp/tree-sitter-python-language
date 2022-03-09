@@ -12,7 +12,7 @@ package_data = {
     "tree_sitter_python_language": ["src/*", "src/tree_sitter/*"],
 }
 
-install_requires = ["tree_sitter>=0.20.0,<0.21.0"]
+requirements = ["tree_sitter>=0.20.0,<0.21.0"]
 
 setup_kwargs: Dict[str, Any] = {
     "name": "tree-sitter-python-language",
@@ -26,7 +26,7 @@ setup_kwargs: Dict[str, Any] = {
     "url": None,
     "packages": packages,
     "package_data": package_data,
-    "install_requires": install_requires,
+    "install_requires": requirements,
     "python_requires": ">=3.7,<4.0",
 }
 
