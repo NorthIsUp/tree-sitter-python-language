@@ -5,3 +5,5 @@
 /dist
 *.egg-info
 tree_sitter_python_language/src/
+tree_sitter_python_language/_versions.py
+pyproject.toml
