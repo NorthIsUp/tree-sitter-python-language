@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+from typing import Any, Dict
+
 from setuptools import setup
 
-VERSION = "0.8.0"
+from tree_sitter_python_language import __grammar_version__, __version__
 
 packages = ["tree_sitter_python_language"]
 
@@ -12,10 +14,10 @@ package_data = {
 
 install_requires = ["tree_sitter>=0.20.0,<0.21.0"]
 
-setup_kwargs = {
+setup_kwargs: Dict[str, Any] = {
     "name": "tree-sitter-python-language",
-    "version": VERSION,
-    "description": "hi",
+    "version": __version__,
+    "description": f"A pip-installable version of tree-sitter-python-language-v{__grammar_version__}",
     "long_description": None,
     "author": "adam",
     "author_email": None,
