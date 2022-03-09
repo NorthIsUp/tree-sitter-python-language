@@ -4,3 +4,4 @@
 /build
 /dist
 *.egg-info
+tree_sitter_python_language/src/
