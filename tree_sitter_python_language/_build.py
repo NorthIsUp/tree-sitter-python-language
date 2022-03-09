@@ -29,8 +29,11 @@ def build_python_language(
     if rebuild and _BUILD_OUTPUT.exists():
         _BUILD_OUTPUT.unlink()
 
-    if _lock.acquire() and not _BUILD_OUTPUT.exists():
-        build_successful = Language.build_library(str(_BUILD_OUTPUT), [str(_PACKAGE)])
-        assert build_successful, "python tree-parser language failed to build"
+    with _lock:
+        if _BUILD_OUTPUT.exists():
+            build_successful = Language.build_library(
+                str(_BUILD_OUTPUT), [str(_PACKAGE)]
+            )
+            assert build_successful, "python tree-parser language failed to build"
 
     return _BUILD_OUTPUT
