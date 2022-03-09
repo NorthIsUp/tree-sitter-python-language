@@ -48,6 +48,7 @@ setup_kwargs: Dict[str, Any] = {
     "url": "https://github.com/NorthIsUp/tree-sitter-python-language",
     "packages": packages,
     "package_data": package_data,
+    "setup_requires": requirements,
     "install_requires": requirements,
     "python_requires": ">=3.7,<4.0",
     "cmdclass": {"install": _install},
