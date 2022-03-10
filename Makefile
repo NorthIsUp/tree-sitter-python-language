@@ -1,4 +1,4 @@
-PACKAGE_VERSION := 0.13.4
+PACKAGE_VERSION := 0.14.0
 GRAMMAR_VERSION := 0.19.0
 
 TREE_SITTER_PYTHON_SRC := tree-sitter-python-$(GRAMMAR_VERSION)
@@ -39,34 +39,7 @@ tree_sitter_python_language/_versions.py:
 	#   $(TREE_SITTER_PYTHON_TGZ)\n\
 	__grammar_version__ = "$(GRAMMAR_VERSION)"'
 
-pyproject.toml:
-	@echo "--> creating $@"
-	@echo > $@ '\
-	[tool.poetry]\n\
-	name="tree-sitter-python-language"\n\
-	version="$(PACKAGE_VERSION)"\n\
-	description="hi"\n\
-	authors=["adam"]\n\
-	include=[\n\
-		"tree_sitter_python_language/src/**/*",\n\
-	]\n\
-	#build = "build.py"\n\
-	\n\
-	[tool.poetry.dependencies]\n\
-	python = "^3.7"\n\
-	tree_sitter = "^0.20.0"\n\
-	\n\
-	[tool.poetry.dev-dependencies]\n\
-	black = ""\n\
-	mypy = ""\n\
-	isort = ""\n\
-	\n\
-	[build-system]\n\
-	requires = ["poetry_core>=1.0.0", "tree_sitter>=0.20.0"]\n\
-	build-backend = "poetry.core.masonry.api"'
-
 deps: clean
-# deps: pyproject.toml
 deps: tree_sitter_python_language/_versions.py
 deps: build/$(TREE_SITTER_PYTHON_SRC)
 deps:
@@ -75,8 +48,6 @@ deps:
 		tree_sitter_python_language/src
 
 build: clean deps
-	# pip install poetry
-	# poetry build --format sdist
 	python setup.py sdist
 
 install: build
@@ -94,8 +65,7 @@ clean:
 		**/*.so \
 		**/__pycache__ \
 		tree_sitter_python_language/src \
-		tree_sitter_python_language/_versions.py \
-		pyproject.toml
+		tree_sitter_python_language/_versions.py
 
 format:
 	pip install black
