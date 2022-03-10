@@ -16,7 +16,8 @@ def py_language(rebuild: bool = False) -> Language:
     global _language_cache
     if rebuild or not _language_cache:
         _language_cache = Language(
-            build_python_language(rebuild=True, build_lib=_PACKAGE), "python"
+            build_python_language(rebuild=rebuild, build_lib=_PACKAGE),
+            "python",
         )
     assert _language_cache, "this should exist"
     return _language_cache
