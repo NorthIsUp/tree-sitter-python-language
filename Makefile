@@ -1,4 +1,4 @@
-PACKAGE_VERSION := 0.13.2
+PACKAGE_VERSION := 0.13.3
 GRAMMAR_VERSION := 0.19.0
 
 TREE_SITTER_PYTHON_SRC := tree-sitter-python-$(GRAMMAR_VERSION)
@@ -17,11 +17,14 @@ endif
 
 all: build
 
-build/$(TREE_SITTER_PYTHON_SRC):
+deps/$(TREE_SITTER_PYTHON_SRC).tar.gz:
+	mkdir -p deps
+	curl -L -o deps/$(TREE_SITTER_PYTHON_SRC).tar.gz $(TREE_SITTER_PYTHON_TGZ)
+
+build/$(TREE_SITTER_PYTHON_SRC): deps/$(TREE_SITTER_PYTHON_SRC).tar.gz
 	@echo "--> creating $@"
 	mkdir -p build
-	curl -L -o build/$(TREE_SITTER_PYTHON_SRC).tar.gz $(TREE_SITTER_PYTHON_TGZ)
-	tar -zxf build/$(TREE_SITTER_PYTHON_SRC).tar.gz --directory build
+	tar -zxf deps/$(TREE_SITTER_PYTHON_SRC).tar.gz --directory build
 
 tree_sitter_python_language/_versions.py:
 	@echo "--> creating $@"
@@ -47,7 +50,7 @@ pyproject.toml:
 	include=[\n\
 		"tree_sitter_python_language/src/**/*",\n\
 	]\n\
-	build = "build.py"\n\
+	#build = "build.py"\n\
 	\n\
 	[tool.poetry.dependencies]\n\
 	python = "^3.7"\n\
@@ -59,7 +62,7 @@ pyproject.toml:
 	isort = ""\n\
 	\n\
 	[build-system]\n\
-	requires = ["poetry_core>=1.0.0"]\n\
+	requires = ["poetry_core>=1.0.0", "tree_sitter>=0.20.0"]\n\
 	build-backend = "poetry.core.masonry.api"'
 
 deps: clean
@@ -72,7 +75,8 @@ deps:
 		tree_sitter_python_language/src
 
 build: clean deps
-	pip install poetry
+	# pip install poetry
+	# poetry build --format sdist
 	python setup.py sdist
 
 install: build
@@ -103,4 +107,8 @@ build-debug: build
 	tree build
 	@echo '-------------- dist ---------------'
 	tree dist
-	python dist/tree-sitter-python-language-*/tree_sitter_python_language
+
+test: build-debug
+	virtualenv-this --python python3.10 --clear scratch
+	source ~/.virtualenvs/scratch/bin/activate && pip -vv install ~/src/tree-sitter-python-language/dist/tree-sitter-python-language-0.13.2.tar.gz
+	tree ~/.virtualenvs/scratch/lib/python3.10/site-packages/tree_sitter_python_language/
